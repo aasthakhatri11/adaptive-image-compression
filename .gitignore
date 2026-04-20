@@ -1,11 +1,24 @@
+# Python
+
 **pycache**/
 *.pyc
-.ipynb_checkpoints/
+*.pyo
+*.pyd
+
+# Jupyter
+
+.ipynb_checkpoints
+
+# Data
 
 data/
 *.zip
 *.tar
 
+# Models
+
 *.pth
+
+# OS
 
 .DS_Store
