@@ -1,4 +1,4 @@
-# CNN-based Adaptive Image Compression 
+# Adaptive Image Compression 
 
 ## Overview
 
@@ -10,7 +10,7 @@ A convolutional neural network predicts an importance map for each image, allowi
 
 ## Key Features
 
-* CNN-based importance map prediction
+* UNet-based importance map prediction
 * Adaptive JPEG quantization guided by learned features
 * Block-wise DCT compression pipeline
 * Rate–distortion evaluation using RMSE and Bits-Per-Pixel (BPP)
