@@ -67,7 +67,7 @@ The adaptive method achieves **+0.15 dB PSNR** at a comparable bitrate.
 
 ### Rate–Distortion Curve
 
-![RD Curve](results/rd_curve_final.png)
+![RD Curve](results/rd_curve.png)
 
 Adaptive compression consistently outperforms standard JPEG across all quality levels, with gains that grow at higher quality settings:
 
