@@ -111,16 +111,6 @@ Smooth, homogeneous regions receive coarser quantization with minimal perceptual
 
 ---
 
-## Training
-
-![Training Curves](results/training_curves.png)
-
-- Stable convergence across all runs
-- No significant overfitting observed
-- Importance distribution learned effectively from the composite loss
-
----
-
 ## Project Structure
 
 ```
