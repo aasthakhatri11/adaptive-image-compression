@@ -104,7 +104,7 @@ Standard JPEG introduces uniform blocking artifacts. The adaptive method preserv
 
 The model learns to focus bits on:
 - Sharp edges and object boundaries
-- High-frequency textures (fur, foliage, fabric)
+- High-frequency textures 
 - Semantically salient regions
 
 Smooth, homogeneous regions receive coarser quantization with minimal perceptual impact.
@@ -146,7 +146,6 @@ Then open `notebooks/train_model.ipynb` to train or evaluate the model.
 
 ## Future Work
 
-- [ ] True entropy coding for accurate bitrate estimation (replace BPP proxy)
 - [ ] Perceptual loss integration (LPIPS / VGG features)
 - [ ] Improved importance map interpretability and visualization
 - [ ] Transformer-based backbone (e.g., Swin-UNet)
