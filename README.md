@@ -116,18 +116,16 @@ Smooth, homogeneous regions receive coarser quantization with minimal perceptual
 ```
 image-compression-importance/
 ├── notebooks/
-│   └── training_model.ipynb            # Full pipeline: train, eval, visualize
+│   └── train_model.ipynb               # Full pipeline: train, eval, visualize
 ├── src/
 │   ├── model.py                        # U-Net architecture
-│   ├── dataset.py                      # HR/LR pair loading and augmentation
-│   ├── compression.py                  # DCT-based adaptive JPEG compression
-│   └── utils.py                        # Metrics, visualization helpers
+│   ├── compression_utils.py            # DCT-based adaptive JPEG compression
 ├── results/
 │   ├── comparison.png                  # Visual side-by-side comparison
 │   ├── rd_curve_final.png              # Rate-distortion plot
-│   └── training_curves.png            # Loss curves
 ├── models/
 │   └── final_model.pth                # Pretrained weights
+├── LICENSE                            # MIT License
 ├── README.md
 └── requirements.txt
 ```
