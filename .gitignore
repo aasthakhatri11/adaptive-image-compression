@@ -37,5 +37,3 @@ venv/
 env/
 *.egg-info/
 
-# Results (optional — remove if you want results/ tracked)
-# results/
