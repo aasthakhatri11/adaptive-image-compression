@@ -1,24 +1,41 @@
 # Python
-
-**pycache**/
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.pyo
 
 # Jupyter
-
-.ipynb_checkpoints
+.ipynb_checkpoints/
+*.ipynb_checkpoints
 
 # Data
-
 data/
+*.npy
 *.zip
 *.tar
+*.tar.gz
+*.gz
 
 # Models
-
 *.pth
+*.pt
+*.ckpt
 
 # OS
-
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+runs/
+logs/
+
+# Environment
+.env
+venv/
+env/
+*.egg-info/
+
+# Results (optional — remove if you want results/ tracked)
+# results/
