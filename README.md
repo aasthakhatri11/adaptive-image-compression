@@ -78,12 +78,8 @@ Adaptive compression consistently outperforms standard JPEG across all quality l
 
 ### Perceptual Quality (SSIM)
 
-| Method | SSIM |
-|--------|------|
-| Adaptive | 0.9172 |
-| Standard | 0.9172 |
-
-SSIM scores are comparable — PSNR gains come from better bit allocation rather than structural distortion.
+SSIM is equivalent between methods (0.9172 both). 
+The method improves PSNR without degrading structural similarity.
 
 ### Visual Comparison
 
@@ -93,10 +89,11 @@ Standard JPEG introduces uniform blocking artifacts. The adaptive method preserv
 
 ### Per-Image Analysis
 
-- **Majority of images** show positive PSNR gains
-- **Typical improvement**: +0.2 to +0.7 dB
-- **Some images**: gains exceed 1 dB
-- **Minor regressions**: occur on a small subset (expected with adaptive methods)
+- **80 of 100 images** show positive PSNR gains at Q=40
+- **Typical improvement**: +0.1 to +0.5 dB
+- **Maximum improvement**: +1.54 dB (image 64: 46.57 vs 45.03)
+- **20 images show minor regressions**, averaging -0.08 dB
+- Gains increase consistently at higher quality settings
 
 ---
 
@@ -115,8 +112,10 @@ Smooth, homogeneous regions receive coarser quantization with minimal perceptual
 
 ```
 image-compression-importance/
-├── notebooks/
-│   └── train_model.ipynb               # Full pipeline: train, eval, visualize
+notebooks/
+├── train_model.ipynb        # Training, evaluation, RD curve
+├── test_model.ipynb         # Importance map analysis and visualization
+├── compression_engine.ipynb # Full compression pipeline and metrics
 ├── src/
 │   ├── model.py                        # U-Net architecture
 │   ├── compression_utils.py            # DCT-based adaptive JPEG compression
@@ -140,16 +139,40 @@ cd image-compression-importance
 pip install -r requirements.txt
 ```
 
+## Dataset
+
+Due to size constraints, the dataset is not included in this repository.
+
+Download it from:
+
+- HR images: [Download HR](https://drive.google.com/file/d/1qkXi3MIVw0mxQyFKVDr-p7zMJdhN5GSd/view?usp=sharing)
+- LR images: [Download LR](https://drive.google.com/file/d/1NEQ8Er8gYUeJV3ADRws_wQ1rCU_PdJh0/view?usp=sharing)
+
+### Format
+
+- `hr_images.npy`: shape (N, H, W, 3)
+- `lr_images.npy`: shape (N, H, W, 3)
+
+### Usage
+
+After downloading, place the files in the project root directory:
+
+```
+image-compression-importance/
+├── hr_images.npy
+├── lr_images.npy
+```
+
 Then open `notebooks/train_model.ipynb` to train or evaluate the model.
 
 ---
 
 ## Future Work
 
-- [ ] Perceptual loss integration (LPIPS / VGG features)
-- [ ] Improved importance map interpretability and visualization
-- [ ] Transformer-based backbone (e.g., Swin-UNet)
-- [ ] Extension to video compression
+- [ ] BD-rate evaluation against standard JPEG benchmarks
+- [ ] Generalization testing across diverse image domains  
+- [ ] Perceptual loss integration (LPIPS)
+- [ ] Extension to video keyframe compression
 
 ---
 
