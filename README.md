@@ -19,35 +19,12 @@ The result: more bits go to edges and textures that the eye cares about, fewer b
 
 ## How It Works
 
-```
-HR + LR Images (6-ch input)
-        │
-        ▼
-Extract 96×96 patches — stride 48, capped at 30k per dataset
-        │
-        ▼
-U-Net → single-channel importance map
-        │
-        ▼
-normalize_importance() — rescales map to a stable [0,1] range
-        │
-        ▼
-process_image_torch() — differentiable DCT compression
-  scales quantization table per 8×8 block by importance
-        │
-        ▼
-Loss = distortion (MSE) + edge + sparsity + contrast
-                        + improvement over standard JPEG
-        │
-  ──────────── evaluation ────────────
-        │
-        ▼
-process_image_bitrate_neutral() — numpy DCT, no gradients
-  applies learned importance map at matched bitrate
-        │
-        ▼
-PSNR · SSIM · BPP
-```
+1. Input: HR + LR images (6-channel)
+2. U-Net predicts importance map
+3. Map is normalized to [0,1]
+4. JPEG quantization is scaled per 8×8 block
+5. Compression is applied
+6. Metrics computed (PSNR, SSIM, BPP)
 
 The model predicts an importance map from paired high- and low-resolution inputs, which is used to adapt JPEG quantization at the block level. During training, a differentiable compression pipeline allows the model to optimize reconstruction quality while encouraging efficient bit allocation. At evaluation time, the learned importance map is applied in a standard (non-differentiable) compression setting to measure real performance using PSNR, SSIM, and bitrate.
 
