@@ -123,8 +123,8 @@ notebooks/
 │   ├── comparison.png                  # Visual side-by-side comparison
 │   ├── rd_curve_final.png              # Rate-distortion plot
 ├── models/
-│   └── best_model.pth                # Pretrained weights
-├── LICENSE                            # MIT License
+│   └── best_model.pth                  # Pretrained weights
+├── LICENSE                             # MIT License
 ├── README.md
 └── requirements.txt
 ```
