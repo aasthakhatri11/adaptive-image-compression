@@ -16,7 +16,7 @@
 
 ## Overview
 
-This project explores a deep learning–based approach to adaptive image compression using a U-Net model to predict spatial importance maps. These maps guide JPEG quantization, allowing visually important regions to be preserved at higher quality while compressing less critical areas more aggressively.
+A U-Net is trained to predict a spatial **importance map** from paired HR/LR image inputs. This map guides block-level JPEG quantization — important regions (edges, object boundaries, fine textures) receive finer quantization and more bits. Flat, smooth regions are compressed harder. The result is better reconstruction quality at comparable bitrates, with no change to the JPEG format itself.
 
 The result: more bits go to edges and textures that the eye cares about, fewer bits go to smooth or homogeneous regions.
 
@@ -24,39 +24,43 @@ The result: more bits go to edges and textures that the eye cares about, fewer b
 
 ## How It Works
 
-1. Input: HR + LR images (6-channel)
-2. U-Net predicts importance map
-3. Map is normalized to [0,1]
-4. JPEG quantization is scaled per 8×8 block
-5. Compression is applied
-6. Metrics computed (PSNR, SSIM, BPP)
+```
+HR + LR images  →  U-Net  →  importance map (256×256)
+                                     │
+                        normalize and redistribute
+                                     │
+                   adaptive DCT quantization per 8×8 block
+                                     │
+                              PSNR · SSIM · BPP
+```
 
-The model predicts an importance map from paired high- and low-resolution inputs, which is used to adapt JPEG quantization at the block level. During training, a differentiable compression pipeline allows the model to optimize reconstruction quality while encouraging efficient bit allocation. At evaluation time, the learned importance map is applied in a standard (non-differentiable) compression setting to measure real performance using PSNR, SSIM, and bitrate.
+The model predicts an importance map from paired high and low resolution inputs, which is used to adapt JPEG quantization at the block level. During training, a differentiable compression pipeline allows the model to optimize reconstruction quality while encouraging efficient bit allocation. At evaluation time, the learned importance map is applied in a standard (non-differentiable) compression setting to measure real performance using PSNR, SSIM, and bitrate.
 
 ---
 
 ## Results
 
+### Overall Performance — 137 test images, Q=40
 
-### Overall Performance at Q=40
+| Method | RMSE ↓ | BPP | PSNR ↑ |
+|--------|--------|-----|--------|
+| Standard JPEG | 4.855 | 2.728 | 34.41 dB |
+| **Adaptive (Ours)** | **4.778** | 2.811 | **34.55 dB** |
 
-| Method | RMSE ↓ | BPP ↓ | PSNR ↑ |
-|--------|--------|-------|--------|
-| Standard JPEG | 5.156 | 2.717 | 34.38 dB |
-| **Ours (Adaptive)** | **4.716** | 2.811 | **34.53 dB** |
-
-The adaptive method achieves **+0.15 dB PSNR** at a comparable bitrate.
+**+0.14 dB PSNR** at comparable bitrate, validated across 137 held-out test images.
 
 ### Rate–Distortion Curve
 
-![RD Curve](results/rd_curve.png)
+![RD Curve](results/rd_curve_final.png)
 
-Adaptive compression consistently outperforms standard JPEG across all quality levels, with gains that grow at higher quality settings:
+PSNR gains grow consistently with quality level:
 
 | Quality | PSNR Gain |
 |---------|-----------|
-| Q=40 | +0.15 dB |
-| Q=80 | +0.38 dB |
+| Q=20 | +0.07 dB |
+| Q=40 | +0.17 dB |
+| Q=60 | +0.24 dB |
+| Q=80 | +0.37 dB |
 
 ### Perceptual Quality (SSIM)
 
@@ -67,16 +71,16 @@ The method improves PSNR without degrading structural similarity.
 
 ![Comparison](results/comparison.png)
 
-Standard JPEG introduces uniform blocking artifacts. The adaptive method preserves edges and fine textures by concentrating quantization budget in high-frequency regions.
+### Per-Image Analysis — Q=40, 137 images
 
-### Per-Image Analysis
+- **85 of 100 evaluated images** show positive PSNR gains
+- Average gain: **+0.14 dB**, maximum: **+0.49 dB**
+- Compression ratios: **21x** at Q=10, **9x** at Q=40, **5x** at Q=80
+- Minor regression at Q=10 (−0.11 dB) — noted as a known limitation
 
-- **80 of 100 images** show positive PSNR gains at Q=40
-- **Typical improvement**: +0.1 to +0.5 dB
-- **Maximum improvement**: +1.54 dB (image 64: 46.57 vs 45.03)
-- **20 images show minor regressions**, averaging -0.08 dB
-- Gains increase consistently at higher quality settings
+### SSIM
 
+SSIM is equivalent between methods (0.9255 adaptive vs 0.9256 standard). The method improves pixel-level fidelity without degrading structural similarity.
 ---
 
 ## What the Importance Map Learns
@@ -86,7 +90,18 @@ The model learns to focus bits on:
 - High-frequency textures 
 - Semantically salient regions
 
-Smooth, homogeneous regions receive coarser quantization with minimal perceptual impact.
+---
+
+## What the Importance Map Learns
+
+![Importance Map Grid](results/importance_maps_grid.png)
+
+The model learns to preserve:
+- Sharp edges and object boundaries
+- High-frequency textures and fine structural detail
+- Semantically salient regions — vehicles, faces, lights, text
+
+Flat skies, smooth backgrounds, and uniform surfaces are compressed harder with minimal perceptual impact. The city skyline demo above shows this clearly: sky is dark (low importance), buildings and bridge railings are bright (high importance, fine quantization).
 
 ---
 
@@ -94,19 +109,21 @@ Smooth, homogeneous regions receive coarser quantization with minimal perceptual
 
 ```
 image-compression-importance/
-notebooks/
-├── train_model.ipynb        # Training, evaluation, RD curve
-├── test_model.ipynb         # Importance map analysis and visualization
-├── compression_engine.ipynb # Full compression pipeline and metrics
+├── notebooks/
+│   ├── 01_train_model.ipynb         # Data prep, training, RD evaluation
+│   ├── 02_test_model.ipynb          # Model validation, importance map analysis
+│   └── 03_compression_engine.ipynb  # Full compression pipeline and benchmarks
 ├── src/
-│   ├── model.py                        # U-Net architecture
-│   ├── compression_utils.py            # DCT-based adaptive JPEG compression
+│   └── compression_utils.py         # DCT-based adaptive JPEG compression
 ├── results/
-│   ├── comparison.png                  # Visual side-by-side comparison
-│   ├── rd_curve_final.png              # Rate-distortion plot
+│   ├── demo_final.gif               # Animated demo
+│   ├── rd_curve_final.png           # Rate-distortion curve
+│   ├── comparison.png               # Visual side-by-side comparison
+│   ├── importance_maps_grid.png     # Importance map examples
+│   └── psnr_gain_bar.png            # Per-image PSNR gain chart
 ├── models/
-│   └── best_model.pth                  # Pretrained weights
-├── LICENSE                             # MIT License
+│   └── best_model.pth               # Pretrained weights (see Releases)
+├── LICENSE
 ├── README.md
 └── requirements.txt
 ```
@@ -121,6 +138,8 @@ cd image-compression-importance
 pip install -r requirements.txt
 ```
 
+**Dependencies:** `torch torchvision numpy opencv-python matplotlib tqdm pytorch-msssim imageio`
+
 ## Dataset
 
 Due to size constraints, the dataset is not included in this repository.
@@ -130,22 +149,18 @@ Download it from:
 - HR images: [Download HR](https://drive.google.com/file/d/1qkXi3MIVw0mxQyFKVDr-p7zMJdhN5GSd/view?usp=sharing)
 - LR images: [Download LR](https://drive.google.com/file/d/1NEQ8Er8gYUeJV3ADRws_wQ1rCU_PdJh0/view?usp=sharing)
 
-### Format
+Both files are shape `(N, 256, 256, 3)`, uint8. Place in project root, then run `01_train_model.ipynb`.
 
-- `hr_images.npy`: shape (N, H, W, 3)
-- `lr_images.npy`: shape (N, H, W, 3)
+## Pretrained Weights
 
-### Usage
+Download `best_model.pth` from the release page and place in `models/`.
 
-After downloading, place the files in the project root directory:
+---
 
-```
-image-compression-importance/
-├── hr_images.npy
-├── lr_images.npy
-```
+## Limitations
 
-Then open `notebooks/train_model.ipynb` to train or evaluate the model.
+- Minor PSNR regression at Q=10 (−0.11 dB) — importance redistribution is insufficient at very aggressive compression
+- Adaptive BPP is slightly above standard at equivalent quality settings due to imperfect bitrate-neutral normalization
 
 ---
 
@@ -160,6 +175,5 @@ Then open `notebooks/train_model.ipynb` to train or evaluate the model.
 
 ## Summary
 
-This project demonstrates that **importance-guided quantization consistently improves compression quality over standard JPEG**. By combining a U-Net importance predictor with classical DCT-based compression, the system learns to allocate bits more efficiently — achieving better reconstruction of visually important regions without requiring a full learned codec.
+This project demonstrates that a U-Net trained with a differentiable DCT compression pipeline can learn to redistribute quantization budget intelligently — achieving consistent PSNR improvements over standard JPEG from Q=20 to Q=80, validated on 137 test images. It bridges classical image compression and modern deep learning without requiring a full learned entropy model.
 
-It bridges classical image compression and modern deep learning in a lightweight, interpretable way.
