@@ -152,10 +152,6 @@ Download it from:
 
 Both files are shape `(N, 256, 256, 3)`, uint8. Place in project root, then run `01_train_model.ipynb`.
 
-## Pretrained Weights
-
-Download `best_model.pth` from the release page and place in `models/`.
-
 ---
 
 ## Limitations
