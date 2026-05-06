@@ -94,7 +94,7 @@ The model learns to focus bits on:
 
 ## What the Importance Map Learns
 
-![Importance Map Grid](results/importance_grid.png)
+![Importance Map Grid](results/focus_only.gif)
 
 The model learns to preserve:
 - Sharp edges and object boundaries
