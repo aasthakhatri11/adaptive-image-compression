@@ -1,11 +1,16 @@
 #   Importance-Guided Adaptive Image Compression 
 
-> Deep learning–based adaptive JPEG compression using spatial importance maps to allocate bits where they matter most.
+> A deep learning pipeline that learns *where* an image matters — then compresses smarter.
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/Framework-PyTorch-orange.svg)](https://pytorch.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-blue.svg)]()
+[![PSNR Gain](https://img.shields.io/badge/PSNR_Gain-+0.14_dB-success.svg)]()
+[![Validated](https://img.shields.io/badge/Validated-137_images-blue.svg)]()
+
+---
+
+![Demo](results/demo_final.gif)
 
 ---
 
