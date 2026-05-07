@@ -1,0 +1,14 @@
+{
+  "adaptive_rmse": 4.857236980580814,
+  "adaptive_bpp": 2.865798034667969,
+  "adaptive_psnr": 34.68011538098427,
+  "adaptive_ssim": 0.9255295866727828,
+  "standard_rmse": 4.932603227659208,
+  "standard_bpp": 2.782576141357422,
+  "standard_psnr": 34.523768865297164,
+  "standard_ssim": 0.9255730032920837,
+  "images_improved": 85,
+  "total_images": 100,
+  "avg_psnr_gain": 0.15634651568710248,
+  "importance_error_correlation": 0.46340040703213214
+}
