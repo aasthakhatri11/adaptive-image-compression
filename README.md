@@ -73,15 +73,25 @@ PSNR gains grow consistently with quality level:
 - Compression ratios: **21x** at Q=10, **9x** at Q=40, **5x** at Q=80
 - Minor regression at Q=10 (−0.11 dB) — noted as a known limitation
 
+<p align="center">
+  <img src="results/plots/psnr_gain_bar.png" width="750"/>
+</p>
+
 ### SSIM
 
 SSIM is equivalent between methods (0.9255 adaptive vs 0.9256 standard). The method improves pixel-level fidelity without degrading structural similarity.
+
+<p align="center">
+  <img src="results/plots/scatter_test.png" width="500"/>
+</p>
 
 ---
 
 ## What the Importance Map Learns
 
-![Importance Map Grid](results/gifs/focus_only.gif)
+<p align="center">
+  <img src="results/gifs/focus_only.gif" width="450"/>
+</p>
 
 The model learns to preserve:
 - Sharp edges and object boundaries
@@ -89,6 +99,10 @@ The model learns to preserve:
 - Semantically salient regions — vehicles, faces, lights, text
 
 Flat skies, smooth backgrounds, and uniform surfaces are compressed harder with minimal perceptual impact. The city skyline demo above shows this clearly: sky is dark (low importance), buildings and bridge railings are bright (high importance, fine quantization).
+
+<p align="center">
+  <img src="results/plots/importance_grid.png" width="350"/>
+</p>
 
 ---
 
